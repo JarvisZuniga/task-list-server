@@ -9,15 +9,32 @@ let tasks = [
   { id: 4, title: 'Tarea 4', completed: true },
 ];
 
+// Middleware para manejar errores de solicitud
+const handleRequestErrors = (req, res, next) => {
+  const { method, body } = req;
 
+  if ((method === 'POST' || method === 'PUT') && !body) {
+    return res.status(400).json({ message: 'El cuerpo de la solicitud no puede estar vacío.' });
+  }
+
+  if (method === 'POST' && (!body.title || typeof body.completed !== 'boolean')) {
+    return res.status(400).json({ message: 'Información no válida o atributos faltantes para crear las tareas.' });/////////
+  }
+
+  if (method === 'PUT' && Object.keys(body).length === 0) {
+    return res.status(400).json({ message: 'El cuerpo de la solicitud no puede estar vacío.' });////////
+  }
+
+  if (method === 'PUT' && (body.title === undefined && body.completed === undefined)) {
+    return res.status(400).json({ message: 'Información no válida o atributos faltantes para actualizar las tareas.' });
+  }
+
+  next();
+};
 
 // Ruta para crear una tarea
-listEditRouter.post('/tasks', (req, res) => {
+listEditRouter.post('/tasks', handleRequestErrors, (req, res) => {
   const { title, completed } = req.body;
-
-  if (!title) {
-    return res.status(400).json({ message: 'El título de la tarea es obligatorio' });
-  }
 
   const newTask = {
     id: tasks.length + 1,
@@ -26,18 +43,18 @@ listEditRouter.post('/tasks', (req, res) => {
   };
 
   tasks.push(newTask);
-  res.status(201).json(newTask);
+  res.status(200).json(newTask);
 });
 
 // Ruta para eliminar una tarea en específico
-listEditRouter.delete('/tasks/:taskId', (req, res) => {
+listEditRouter.delete('/tasks/:taskId', handleRequestErrors, (req, res) => {
   const taskId = parseInt(req.params.taskId);
   tasks = tasks.filter(t => t.id !== taskId);
   res.json({ message: 'Tarea eliminada correctamente' });
 });
 
 // Ruta para actualizar una tarea en específico
-listEditRouter.put('/tasks/:taskId', (req, res) => {
+listEditRouter.put('/tasks/:taskId', handleRequestErrors, (req, res) => {
   const taskId = parseInt(req.params.taskId);
   const { title, completed } = req.body;
 
@@ -52,7 +69,7 @@ listEditRouter.put('/tasks/:taskId', (req, res) => {
 
     res.json(tasks[taskIndex]);
   } else {
-    res.status(404).json({ message: 'Tarea no encontrada' });
+    res.status(400).json({ message: 'Tarea no encontrada' });
   }
 });
 

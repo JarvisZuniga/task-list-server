@@ -4,13 +4,6 @@ const listViewRouter = require('./list-view-router');
 const listEditRouter = require('./list-edit-router');
 
 const app = express();
-const port = 3000;
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/list-view', listViewRouter);
-app.use('/list-edit', listEditRouter);
-
 app.use((req, res, next) => {
     const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -21,6 +14,15 @@ app.use((req, res, next) => {
 
     next();
     });
+
+const port = 3000;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/list-view', listViewRouter);
+app.use('/list-edit', listEditRouter);
+
+
 
 
 // Inicia el servidor
