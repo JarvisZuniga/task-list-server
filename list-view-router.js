@@ -13,7 +13,7 @@ const validateParams2 = (req, res, next) => {
   next();
 };
 
-// Middleware para verificar que los parámetros sean correctos Ruta filtrar tareas completas o incompletas
+// Middleware para verificar que los parámetros sean correctos**Ruta filtrar tareas completas o incompletas
 const validateParams3 = (req, res, next) => {
   const validParams = ['completed', 'incomplete'];
   const status = req.params.status;
@@ -52,7 +52,7 @@ listViewRouter.get('/tasks/:taskId', validateParams2, (req, res) => {
     }
 });
 
-// Ruta para filtrar tareas completas o incompletas
+// Ruta para filtrar tareas completed o incomplete
 listViewRouter.get('/tasks/filter/:status', validateParams3, (req, res) => {
   const status = req.params.status.toLowerCase();
   const filteredTasks = tasks.filter(t => (status === 'completed' && t.completed) || (status === 'incomplete' && !t.completed));
